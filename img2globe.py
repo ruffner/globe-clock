@@ -3,6 +3,7 @@
 import sys
 import numpy as np
 import Image
+from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 
 
@@ -26,7 +27,11 @@ def gen_points(w,h,tex_map):
             for row in rmat:
                 new_p.append(np.dot(row, p))
 
-            points.append([new_p[0], new_p[1], new_p[2], tex_map.getpixel((percx*tex_map.size[0],percy*tex_map.size[1]))])
+            points.append([new_p[0], 
+                           new_p[1], 
+                           new_p[2], 
+                           tex_map.getpixel((percx*tex_map.size[0],
+                                             tex_map.size[1]-percy*tex_map.size[1]))])
     return points
 
 
@@ -35,6 +40,8 @@ if len(sys.argv) > 1:
     print "  using",sys.argv[1]," as tex map"
     
     tmap = Image.open(sys.argv[1])
+    tmap.transpose(Image.FLIP_LEFT_RIGHT)
+    tmap.transpose(Image.FLIP_TOP_BOTTOM)
     print "    width: ",tmap.size[0]
     print "    height:",tmap.size[1]
     
@@ -44,4 +51,7 @@ if len(sys.argv) > 1:
     ax = fig.add_subplot(111, projection='3d')
 
     for x,y,z,color in pts:
-        ax.scatter3D(x, y, z, c=color)
+        if color != (255,255,255):
+            ax.scatter3D(x*5, y*5, z*5, c=[co/255. for co in color])
+
+    plt.show()
