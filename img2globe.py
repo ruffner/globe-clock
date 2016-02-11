@@ -3,14 +3,60 @@
 import sys
 import numpy as np
 import Image
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-
+import vtk
 
 rmat = [[1.,0,0],[0,0,-1.],[0,1.,0]]
 
+class VtkPointCloud:
+    def __init__(self, zMin=-10.0, zMax=10.0, maxNumPoints=1e6):
+        self.maxNumPoints = maxNumPoints
+        self.vtkPolyData = vtk.vtkPolyData()
+        #setup colors
+        self.colors = vtk.vtkUnsignedCharArray()
+        self.colors.SetNumberOfComponents(3)
+        self.colors.SetName("Colors")
+
+        self.clearPoints()
+        self.vtkPolyData.GetPointData().SetScalars(self.colors)
+        
+        mapper = vtk.vtkPolyDataMapper()
+        mapper.SetInput(self.vtkPolyData)
+        mapper.SetColorModeToDefault()
+        mapper.SetScalarRange(zMin, zMax)
+        mapper.SetScalarVisibility(1)
+        self.vtkActor = vtk.vtkActor()
+        self.vtkActor.SetMapper(mapper)
+
+        self.vtkActor.GetProperty().SetPointSize(3)
+        
+    def addPoint(self, point, color):
+        if self.vtkPoints.GetNumberOfPoints() < self.maxNumPoints:
+            pointId = self.vtkPoints.InsertNextPoint(point[:])
+            self.vtkDepth.InsertNextValue(point[2])
+            self.vtkCells.InsertNextCell(1)
+            self.vtkCells.InsertCellPoint(pointId)
+            self.colors.InsertNextTuple3(color[0],color[1],color[2])
+        else:
+            r = random.randint(0, self.maxNumPoints)
+            self.vtkPoints.SetPoint(r, point[:])
+            self.vtkCells.Modified()
+            self.vtkPoints.Modified()
+            self.vtkDepth.Modified()
+
+    def clearPoints(self):
+        self.vtkPoints = vtk.vtkPoints()
+        self.vtkCells = vtk.vtkCellArray()
+        self.vtkDepth = vtk.vtkDoubleArray()
+        self.vtkDepth.SetName('DepthArray')
+        self.vtkPolyData.SetPoints(self.vtkPoints)
+        self.vtkPolyData.SetVerts(self.vtkCells)
+        self.vtkPolyData.GetPointData().SetScalars(self.vtkDepth)
+        self.vtkPolyData.GetPointData().SetActiveScalars('DepthArray')
+
+        
 def gen_points(w,h,tex_map):
-    points = []
+    points = VtkPointCloud()
+    
     for x in range(w):
         percx = ((x+(1./w)) / w)
         lat = 2 * np.pi * percx - np.pi
@@ -27,11 +73,10 @@ def gen_points(w,h,tex_map):
             for row in rmat:
                 new_p.append(np.dot(row, p))
 
-            points.append([new_p[0], 
-                           new_p[1], 
-                           new_p[2], 
-                           tex_map.getpixel((percx*tex_map.size[0],
-                                             tex_map.size[1]-percy*tex_map.size[1]))])
+            c = tex_map.getpixel((percx*tex_map.size[0],tex_map.size[1]-percy*tex_map.size[1]))
+
+            points.addPoint(new_p, c)
+
     return points
 
 
@@ -45,13 +90,24 @@ if len(sys.argv) > 1:
     print "    width: ",tmap.size[0]
     print "    height:",tmap.size[1]
     
-    pts = gen_points(144,72,tmap)
+    pointCloud = gen_points(144,72,tmap)    
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
+    # Renderer
+    renderer = vtk.vtkRenderer()
+    renderer.AddActor(pointCloud.vtkActor)
+    #renderer.SetBackground(.2, .3, .4)
+    renderer.SetBackground(0.0, 0.0, 0.0)
+    renderer.ResetCamera()
+    
+    # Render Window
+    renderWindow = vtk.vtkRenderWindow()
+    renderWindow.AddRenderer(renderer)
 
-    for x,y,z,color in pts:
-        if color != (255,255,255):
-            ax.scatter3D(x*5, y*5, z*5, c=[co/255. for co in color])
-
-    plt.show()
+    # Interactor
+    renderWindowInteractor = vtk.vtkRenderWindowInteractor()
+    renderWindowInteractor.SetRenderWindow(renderWindow)
+    
+    # Begin Interaction
+    renderWindow.Render()
+    renderWindow.SetWindowName("Globe Preview:"+sys.argv[1])
+    renderWindowInteractor.Start()
