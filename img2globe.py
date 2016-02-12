@@ -5,6 +5,7 @@ import numpy as np
 import Image
 import vtk
 
+print("yes")
 rmat = [[1.,0,0],[0,0,-1.],[0,1.,0]]
 
 class VtkPointCloud:
