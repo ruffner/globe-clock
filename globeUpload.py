@@ -23,9 +23,9 @@ def callBack():
 	draw.text((5, 26),input,"red",font=font)
 	draw = ImageDraw.Draw(img)
 	img.save("textdisplay.png")
-	img.show()
+	#img.show()
 	os.system("python img2globe.py textdisplay.png")
-	tkMessageBox.showinfo("Globe Clock", "The text is submitted")
+	#tkMessageBox.showinfo("Globe Clock", "The text is submitted")
 
 def fileBrowser():
 	img=Image.open(tkFileDialog.askopenfile(parent=root,mode='rb',title='Choose a file'))
