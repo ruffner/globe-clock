@@ -44,6 +44,8 @@ function render(){
 	cam.pitch(deltaY * 0.015);
     }
 
+    cam.yaw(0.015);
+    
     var c = acorn.getCenter();
     ps.multMatrix(M4x4.makeLookAt(cam.position, cam.direction, cam.up));
     ps.translate(-cam.position[0]-c[0], -cam.position[1]-c[1], -cam.position[2]-c[2] );
@@ -67,4 +69,5 @@ function start(){
     ps.onKeyDown = keyDown;
 
     acorn = ps.load("clouds/out.asc");
+    cam.pitch(0.3);
 }
