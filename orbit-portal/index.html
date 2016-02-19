@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <script src="bower_components/XB-PointStream/psapi.js"></script>
+    <script src="bower_components/XB-PointStream/libs/orbitcam.js"></script>
+    <script src="bower_components/XB-PointStream/libs/mjs.js"></script>
+    <script src="bower_components/XB-PointStream/parsers/asc.js"></script>
+    <script src="bower_components/XB-PointStream/parsers/psi.js"></script>
+    <script src="bower_components/XB-PointStream/parsers/pts.js"></script>
+    <script src="bower_components/XB-PointStream/parsers/ply.js"></script>
+    <script src="globe.js"></script>
+  </head>
+
+  <body onLoad="start();" bgcolor="#222222">
+
+    <form action="src/igen.php" method="post">
+      <input type="text" name="newText" id="newText" />
+      <input type="submit" value=" Go "/>
+    </form>
+
+    
+    <canvas id="canvas" width="600" height="600"></canvas>
+    
+  </body>
+
+</html>

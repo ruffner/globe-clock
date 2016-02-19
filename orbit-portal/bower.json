@@ -1,0 +1,22 @@
+{
+  "name": "orbit-portal",
+  "authors": [
+    "Matt Ruffner <mattruffner7@gmail.com>"
+  ],
+  "description": "The OrbIT interface for accessing GlobeClocks",
+  "main": "index.html",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "http://github.com/ruffner/globe-clock",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "XB-PointStream": "asalga/XB-PointStream"
+  }
+}
