@@ -54,12 +54,13 @@ function render(){
     ps.render(acorn);
 }
 
-function start(){
+function startRender(canvas){
     ps = new PointStream();
 
-    ps.setup(document.getElementById('canvas'));
+	canvas.style.background = 'whitd';
+    ps.setup(canvas);
 
-    ps.background([0, 0, 0, 0.5]);
+    ps.background([0, 0, 0, 0]);
     ps.pointSize(5);
 
     ps.onRender = render;
