@@ -6730,7 +6730,11 @@ Source: www.kingbright.com</description>
 <junction x="55.88" y="20.32"/>
 <pinref part="LED1" gate="G$1" pin="C"/>
 <wire x1="5.08" y1="38.1" x2="5.08" y2="20.32" width="0.1524" layer="91"/>
-<wire x1="5.08" y1="20.32" x2="55.88" y2="20.32" width="0.1524" layer="91"/>
+<wire x1="5.08" y1="20.32" x2="33.02" y2="20.32" width="0.1524" layer="91"/>
+<pinref part="R1" gate="G$1" pin="2"/>
+<wire x1="33.02" y1="20.32" x2="55.88" y2="20.32" width="0.1524" layer="91"/>
+<wire x1="33.02" y1="30.48" x2="33.02" y2="20.32" width="0.1524" layer="91"/>
+<junction x="33.02" y="20.32"/>
 </segment>
 <segment>
 <pinref part="GND5" gate="1" pin="GND"/>
@@ -6797,10 +6801,6 @@ Source: www.kingbright.com</description>
 <wire x1="15.24" y1="68.58" x2="15.24" y2="40.64" width="0.1524" layer="91"/>
 <pinref part="X1" gate="G$1" pin="VCC"/>
 <wire x1="15.24" y1="40.64" x2="20.32" y2="40.64" width="0.1524" layer="91"/>
-<pinref part="R1" gate="G$1" pin="2"/>
-<wire x1="33.02" y1="30.48" x2="15.24" y2="30.48" width="0.1524" layer="91"/>
-<wire x1="15.24" y1="30.48" x2="15.24" y2="40.64" width="0.1524" layer="91"/>
-<junction x="15.24" y="40.64"/>
 </segment>
 </net>
 <net name="N$6" class="0">
