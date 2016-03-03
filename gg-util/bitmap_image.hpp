@@ -30,7 +30,7 @@
 #include <iterator>
 #include <limits>
 #include <string>
-
+#include <typeinfo>
 
 class bitmap_image
 {
@@ -1440,14 +1440,20 @@ private:
 
       if (bfh.type != 19778)
       {
-         //stream.close();
+		std::string s = typeid(stream).name();
+		if(  s.compare(typeid(std::ifstream).name()) == 0 ) {
+			stream.close();
+		}
          std::cerr << "bitmap_image::load_bitmap() ERROR: bitmap_image - Invalid type value " << bfh.type << " expected 19778." << std::endl;
          return;
       }
 
       if (bih.bit_count != 24)
       {
-         //stream.close();
+         std::string s = typeid(stream).name();
+		if(  s.compare(typeid(std::ifstream).name()) == 0 ) {
+			stream.close();
+		}
          std::cerr << "bitmap_image::load_bitmap() ERROR: bitmap_image - Invalid bit depth " << bih.bit_count << " expected 24." << std::endl;
 
          return;
