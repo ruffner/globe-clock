@@ -119,10 +119,10 @@
 				type: Object,
 				value: []
 			},
-	imgData: {
-type: Object,
-value: {size: 0, data: ""}
-},
+			imgData: {
+				type: Object,
+				value: {size: 0, data: ""}
+			},
 			ajax: Object
 		},
 		ready: function() {
@@ -130,7 +130,7 @@ value: {size: 0, data: ""}
 			this.ajax = this.$.ajax;
 			//this.ajax.generateRequest();
 
-	this.$.files.addEventListener('change', this.handleFileSelect, false);
+			this.$.files.addEventListener('change', this.handleFileSelect, false);
 		},
 		handleResponse: function(e) {
 			if( e.detail.response ){
@@ -148,31 +148,35 @@ value: {size: 0, data: ""}
 				this.loginVisible = false;
 			}
 		},
-	handleFileSelect: function(e) {
-	console.log("handling new file");
-    var files = e.target.files; // FileList object
+		handleFileSelect: function(e) {
+			console.log("handling new file");
+			var files = e.target.files; // FileList object
 
-    // files is a FileList of File objects. List some properties.
-    var output = [];
-    for (var i = 0, f; f = files[i]; i++) {
+			// files is a FileList of File objects. List some properties.
+			var output = [];
+			var context = this;
+			for (var i = 0, f; f = files[i]; i++) {
 	
-	 var reader = new FileReader();
-	console.log("made file reader");
-	reader.onload = (function(theFile) {
-        return function(e) {
-          // Render thumbnail.
-	    document.getElementById('fileList').innerHTML = btoa(e.target.result);
-	console.log("in");
-        console.log(e.target.result);
-	};
-      })(f);
+				var reader = new FileReader();
+				console.log("made file reader");
+				reader.onload = (function(theFile) {
+					return function(e) {
+						// Render thumbnail.
+						console.log(this);
+						document.getElementById('fileList').innerHTML = btoa(e.target.result);
+						console.log(e.target);
+						this.context.imgData.data = e.target.result.substring(e.target.result.indexOf(','), -1);
+						this.context.imgData.size = this.context.imgData.data.length;
+						console.log(this.context.imgData);
+					};
+				})(f);
 
-// Read in the image file as a data URL.
-      reader.readAsDataURL(f);
+				// Read in the image file as a data URL.
+				reader.readAsDataURL(f, context);
 
-    }
+			}
 
-  }
+		}
 	});
 </script>
 </dom-module>
