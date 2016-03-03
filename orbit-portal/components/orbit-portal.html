@@ -84,8 +84,9 @@
 				
 				<!-- MAIN CONTENT -->
 				<div class="layout vertical center">
-					
-
+				  <input id="files" type="file" accept="image/bmp">/<input>
+				  <section id="fileList">
+				  </section>
 					<vis-panel></vis-panel>
 
 					
@@ -118,12 +119,18 @@
 				type: Object,
 				value: []
 			},
+	imgData: {
+type: Object,
+value: {size: 0, data: ""}
+},
 			ajax: Object
 		},
 		ready: function() {
 			this.showLogin = false;
 			this.ajax = this.$.ajax;
 			//this.ajax.generateRequest();
+
+	this.$.files.addEventListener('change', this.handleFileSelect, false);
 		},
 		handleResponse: function(e) {
 			if( e.detail.response ){
@@ -140,7 +147,32 @@
 			} else {
 				this.loginVisible = false;
 			}
-		}
+		},
+	handleFileSelect: function(e) {
+	console.log("handling new file");
+    var files = e.target.files; // FileList object
+
+    // files is a FileList of File objects. List some properties.
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+	
+	 var reader = new FileReader();
+	console.log("made file reader");
+	reader.onload = (function(theFile) {
+        return function(e) {
+          // Render thumbnail.
+	    document.getElementById('fileList').innerHTML = btoa(e.target.result);
+	console.log("in");
+        console.log(e.target.result);
+	};
+      })(f);
+
+// Read in the image file as a data URL.
+      reader.readAsDataURL(f);
+
+    }
+
+  }
 	});
 </script>
 </dom-module>
