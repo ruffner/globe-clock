@@ -71,6 +71,18 @@ public:
    {
       load_bitmap();
    }
+   
+   bitmap_image(std::istream& input)
+   : data_  (0),
+     length_(0),
+     width_ (0),
+     height_(0),
+     row_increment_(0),
+     bytes_per_pixel_(0),
+     channel_mode_(bgr_mode)
+   {
+      load_bitmap(input);
+   }
 
    bitmap_image(const unsigned int width, const unsigned int height)
    : file_name_(""),
@@ -1243,7 +1255,7 @@ private:
    }
 
    template<typename T>
-   inline void read_from_stream(std::ifstream& stream,T& t)
+   inline void read_from_stream(std::istream& stream,T& t)
    {
       stream.read(reinterpret_cast<char*>(&t),sizeof(T));
    }
@@ -1254,7 +1266,7 @@ private:
       stream.write(reinterpret_cast<const char*>(&t),sizeof(T));
    }
 
-   inline void read_bfh(std::ifstream& stream, bitmap_file_header& bfh)
+   inline void read_bfh(std::istream& stream, bitmap_file_header& bfh)
    {
       read_from_stream(stream,bfh.type);
       read_from_stream(stream,bfh.size);
@@ -1292,7 +1304,7 @@ private:
       }
    }
 
-   inline void read_bih(std::ifstream& stream,bitmap_information_header& bih)
+   inline void read_bih(std::istream& stream,bitmap_information_header& bih)
    {
       read_from_stream(stream,bih.size  );
       read_from_stream(stream,bih.width );
@@ -1367,6 +1379,49 @@ private:
       data_ = new unsigned char[length_];
    }
 
+	void load_bitmap(std::istream &stream)
+	{
+		 bitmap_file_header bfh;
+      bitmap_information_header bih;
+		
+		read_bfh(stream,bfh);
+		read_bih(stream,bih);
+	
+		if (bfh.type != 19778)
+      {
+         //stream.close();
+         std::cerr << "bitmap_image::load_bitmap() ERROR: bitmap_image - Invalid type value " << bfh.type << " expected 19778." << std::endl;
+         return;
+      }
+
+      if (bih.bit_count != 24)
+      {
+         //stream.close();
+         std::cerr << "bitmap_image::load_bitmap() ERROR: bitmap_image - Invalid bit depth " << bih.bit_count << " expected 24." << std::endl;
+
+         return;
+      }
+
+      height_ = bih.height;
+      width_  = bih.width;
+
+      bytes_per_pixel_ = bih.bit_count >> 3;
+
+      unsigned int padding = (4 - ((3 * width_) % 4)) % 4;
+      char padding_data[4] = {0,0,0,0};
+
+      create_bitmap();
+
+      for (unsigned int i = 0; i < height_; ++i)
+      {
+         unsigned char* data_ptr = row(height_ - i - 1); // read in inverted row order
+
+         stream.read(reinterpret_cast<char*>(data_ptr),sizeof(char) * bytes_per_pixel_ * width_);
+         stream.read(padding_data,padding);
+      }
+	}
+	
+
    void load_bitmap()
    {
       std::ifstream stream(file_name_.c_str(),std::ios::binary);
@@ -1377,22 +1432,22 @@ private:
          return;
       }
 
-      bitmap_file_header bfh;
-      bitmap_information_header bih;
+		bitmap_file_header bfh;
+      bitmap_information_header bih;     
 
       read_bfh(stream,bfh);
       read_bih(stream,bih);
 
       if (bfh.type != 19778)
       {
-         stream.close();
+         //stream.close();
          std::cerr << "bitmap_image::load_bitmap() ERROR: bitmap_image - Invalid type value " << bfh.type << " expected 19778." << std::endl;
          return;
       }
 
       if (bih.bit_count != 24)
       {
-         stream.close();
+         //stream.close();
          std::cerr << "bitmap_image::load_bitmap() ERROR: bitmap_image - Invalid bit depth " << bih.bit_count << " expected 24." << std::endl;
 
          return;

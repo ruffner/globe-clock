@@ -61,9 +61,16 @@ int main(int argc, char * argv[])
 		usage(argv[0]);
 	} 
 	
+	
 	string file_name(argv[1]);
 
-	bitmap_image image(file_name);
+	bitmap_image image;
+
+	if( file_name.compare("-") == 0 )
+		image = bitmap_image(cin);
+	else
+		image = bitmap_image(file_name);
+		
 
 	if (!image)	{
 		cout << "[ERROR] - Failed to open " << file_name << endl;
@@ -170,6 +177,7 @@ void usage(char *exe)
 	cout << "  " << string(exe) << " <input.bmp> [a|g] [outputfile]" << endl;
 	cout << "    out.asc is the structured light point cloud for visualization in the OrbIT Portal and OrbIT Dashboard" << endl;
 	cout << "            thanks to the XB-PointStream library." << endl;
-	cout << "    out.gi is the globe image of arranged RGB values from the input bitmap." << endl << endl;
+	cout << "    out.gi is the globe image of arranged RGB values from the input bitmap." << endl;
+	cout << "    - can be specified for the image input in which case it will be read from stdin." << endl << endl;
 	exit(1);
 }
